@@ -156,7 +156,7 @@ EthernetTransport::sendSkPacket(const ndn::Block& block)
 
   // send the frame
   sk_send_packet(buffer.buf(), buffer.size());
-  NFD_LOG_FACE_TRACE("Successfully sent: " << block.size() << " bytes");
+  NFD_LOG_FACE_TRACE("Successfully sent raw: " << block.size() << " bytes");
 }
 
 void

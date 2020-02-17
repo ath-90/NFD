@@ -74,23 +74,22 @@ sk_send_packet(unsigned char *data, int datalen)
 {
 	memset(sendbuf, 0, BUF_SIZ);
 	struct sockaddr_ll socket_address;
-	
+	tx_len=0;	
 	eh->ether_shost[0] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[0];
 	eh->ether_shost[1] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[1];
 	eh->ether_shost[2] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[2];
 	eh->ether_shost[3] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[3];
 	eh->ether_shost[4] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[4];
 	eh->ether_shost[5] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[5];
-	eh->ether_dhost[0] = 0x00;
+	eh->ether_dhost[0] = 0x01;
 	eh->ether_dhost[1] = 0x00;
-	eh->ether_dhost[2] = 0x00;
+	eh->ether_dhost[2] = 0x5e;
 	eh->ether_dhost[3] = 0x00;
-	eh->ether_dhost[4] = 0x00;
-	eh->ether_dhost[5] = 0x00;
-	uint16_t ethertype = boost::endian::native_to_big(0x8624);
-	eh->ether_type = ethertype;
-	tx_len += sizeof(struct ether_header);
-	
+	eh->ether_dhost[4] = 0x17;
+	eh->ether_dhost[5] = 0xaa;
+	eh->ether_type = 0x2486;
+	tx_len+=sizeof(struct ether_header);
+
 	for (int i = 0; i < datalen ; i++) {
 		sendbuf[tx_len+i] = data[i];
 	}
@@ -100,14 +99,14 @@ sk_send_packet(unsigned char *data, int datalen)
 	/* Address length*/
 	socket_address.sll_halen = ETH_ALEN;
 	/* Destination MAC */
-	socket_address.sll_addr[0] = 0x00;
+	socket_address.sll_addr[0] = 0x01;
 	socket_address.sll_addr[1] = 0x00;
-	socket_address.sll_addr[2] = 0x00;
+	socket_address.sll_addr[2] = 0x5e;
 	socket_address.sll_addr[3] = 0x00;
-	socket_address.sll_addr[4] = 0x00;
-	socket_address.sll_addr[5] = 0x00;
+	socket_address.sll_addr[4] = 0x17;
+	socket_address.sll_addr[5] = 0xaa;
 
 	/* Send packet */
-	if (sendto(sockfd, sendbuf, tx_len, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0)
+	if (sendto(sockfd, sendbuf, datalen, 0, (struct sockaddr*)&socket_address, sizeof(struct sockaddr_ll)) < 0)
 	    printf("Send failed\n");
 }
