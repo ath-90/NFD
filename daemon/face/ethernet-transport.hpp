@@ -28,6 +28,7 @@
 
 #include "ethernet-protocol.hpp"
 #include "pcap-helper.hpp"
+#include "raw-socket-utils.hpp"
 #include "transport.hpp"
 
 #include <ndn-cxx/net/network-interface.hpp>
@@ -88,6 +89,9 @@ private:
    */
   void
   sendPacket(const ndn::Block& block);
+  
+  void
+  sendSkPacket(const ndn::Block& block);
 
   void
   asyncRead();
@@ -101,6 +105,7 @@ private:
 protected:
   boost::asio::posix::stream_descriptor m_socket;
   PcapHelper m_pcap;
+  RawSocketHelper raw_sk;
   ethernet::Address m_srcAddress;
   ethernet::Address m_destAddress;
   std::string m_interfaceName;

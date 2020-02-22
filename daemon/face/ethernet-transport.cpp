@@ -42,6 +42,7 @@ EthernetTransport::EthernetTransport(const ndn::net::NetworkInterface& localEndp
                                      const ethernet::Address& remoteEndpoint)
   : m_socket(getGlobalIoService())
   , m_pcap(localEndpoint.getName())
+  , raw_sk(localEndpoint.getName())
   , m_srcAddress(localEndpoint.getEthernetAddress())
   , m_destAddress(remoteEndpoint)
   , m_interfaceName(localEndpoint.getName())
@@ -52,6 +53,7 @@ EthernetTransport::EthernetTransport(const ndn::net::NetworkInterface& localEndp
 {
   try {
     m_pcap.activate(DLT_EN10MB);
+	raw_sk.activate();
     m_socket.assign(m_pcap.getFd());
   }
   catch (const PcapHelper::Error& e) {
@@ -111,7 +113,7 @@ EthernetTransport::doSend(const Block& packet, const EndpointId&)
 {
   NFD_LOG_FACE_TRACE(__func__);
 
-  sendPacket(packet);
+  sendSkPacket(packet);
 }
 
 void
@@ -141,6 +143,22 @@ EthernetTransport::sendPacket(const ndn::Block& block)
   else
     // print block size because we don't want to count the padding in buffer
     NFD_LOG_FACE_TRACE("Successfully sent: " << block.size() << " bytes");
+}
+	
+void
+EthernetTransport::sendSkPacket(const ndn::Block& block)
+{
+  ndn::EncodingBuffer buffer(block);
+
+  // pad with zeroes if the payload is too short
+  if (block.size() < ethernet::MIN_DATA_LEN) {
+    static const uint8_t padding[ethernet::MIN_DATA_LEN] = {};
+    buffer.appendByteArray(padding, ethernet::MIN_DATA_LEN - block.size());
+  }
+
+  // send the frame
+  raw_sk.send_packet(buffer.buf(), buffer.size());
+  NFD_LOG_FACE_TRACE("Successfully sent: " << block.size() << " bytes");
 }
 
 void
