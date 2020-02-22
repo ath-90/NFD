@@ -37,11 +37,10 @@
 #include <net/if.h>
 #include <netinet/ether.h>
 #include <boost/endian/conversion.hpp>
-
 void
 sk_activate(const std::string& interfaceName)
 {
-	strcpy(ifName, interfaceName);
+	strcpy(ifName, interfaceName.c_str());
 	if ((sockfd = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW)) == -1) {
 		perror("socket");
 	}
@@ -60,9 +59,10 @@ sk_activate(const std::string& interfaceName)
 }
 
 void
-sk_send_packet(char *data, int datalen)
+sk_send_packet(unsigned char *data, int datalen)
 {
 	memset(sendbuf, 0, BUF_SIZ);
+	struct sockaddr_ll socket_address;
 	
 	eh->ether_shost[0] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[0];
 	eh->ether_shost[1] = ((uint8_t *)&if_mac.ifr_hwaddr.sa_data)[1];
@@ -76,7 +76,7 @@ sk_send_packet(char *data, int datalen)
 	eh->ether_dhost[3] = 0x00;
 	eh->ether_dhost[4] = 0x00;
 	eh->ether_dhost[5] = 0x00;
-	uint16_t ethertype = boost::endian::native_to_big(ethernet::ETHERTYPE_NDN);
+	uint16_t ethertype = boost::endian::native_to_big(0x8624);
 	eh->ether_type = ethertype;
 	tx_len += sizeof(struct ether_header);
 	

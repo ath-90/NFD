@@ -42,7 +42,6 @@ EthernetTransport::EthernetTransport(const ndn::net::NetworkInterface& localEndp
                                      const ethernet::Address& remoteEndpoint)
   : m_socket(getGlobalIoService())
   , m_pcap(localEndpoint.getName())
-  , raw_sk(localEndpoint.getName())
   , m_srcAddress(localEndpoint.getEthernetAddress())
   , m_destAddress(remoteEndpoint)
   , m_interfaceName(localEndpoint.getName())
@@ -53,7 +52,7 @@ EthernetTransport::EthernetTransport(const ndn::net::NetworkInterface& localEndp
 {
   try {
     m_pcap.activate(DLT_EN10MB);
-	raw_sk.activate();
+    sk_activate(localEndpoint.getName());
     m_socket.assign(m_pcap.getFd());
   }
   catch (const PcapHelper::Error& e) {
@@ -157,7 +156,7 @@ EthernetTransport::sendSkPacket(const ndn::Block& block)
   }
 
   // send the frame
-  raw_sk.send_packet(buffer.buf(), buffer.size());
+  sk_send_packet(buffer.buf(), buffer.size());
   NFD_LOG_FACE_TRACE("Successfully sent: " << block.size() << " bytes");
 }
 

@@ -105,7 +105,6 @@ private:
 protected:
   boost::asio::posix::stream_descriptor m_socket;
   PcapHelper m_pcap;
-  RawSocketHelper raw_sk;
   ethernet::Address m_srcAddress;
   ethernet::Address m_destAddress;
   std::string m_interfaceName;
