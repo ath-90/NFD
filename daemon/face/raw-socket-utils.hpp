@@ -28,18 +28,11 @@
 
 #include "core/common.hpp"
 #define BUF_SIZ 1516
-  void
+using namespace std;
+void
   sk_activate(const std::string& interfaceName);
   
   void
   sk_send_packet(unsigned char * data, int datalen);
 
-  	int sockfd;
-	struct ifreq if_idx;
-	struct ifreq if_mac;
-	int tx_len = 0;
-	char sendbuf[BUF_SIZ];
-	struct ether_header *eh = (struct ether_header *) sendbuf;
-	char ifName[IFNAMSIZ];
 #endif // NFD_DAEMON_FACE_SOCKET_UTILS_HPP
-

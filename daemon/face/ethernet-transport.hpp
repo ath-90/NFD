@@ -28,7 +28,6 @@
 
 #include "ethernet-protocol.hpp"
 #include "pcap-helper.hpp"
-#include "raw-socket-utils.hpp"
 #include "transport.hpp"
 
 #include <ndn-cxx/net/network-interface.hpp>

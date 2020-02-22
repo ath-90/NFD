@@ -177,7 +177,6 @@ def build(bld):
     if bld.env.HAVE_LIBPCAP:
         nfd_objects.source += bld.path.ant_glob('daemon/face/*ethernet*.cpp')
         nfd_objects.source += bld.path.ant_glob('daemon/face/pcap*.cpp')
-	nfd_objects.source += bld.path.ant_glob('daemon/face/raw-socket-utils.cpp')
         nfd_objects.use += ' LIBPCAP'
 
     if bld.env.HAVE_UNIX_SOCKETS:

@@ -23,7 +23,6 @@
  * NFD, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "raw-socket-utils.hpp"
 #include "ethernet-protocol.hpp"
 
 #include <unistd.h>
@@ -35,8 +34,20 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <net/if.h>
-#include <netinet/ether.h>
 #include <boost/endian/conversion.hpp>
+#define BUF_SIZ 1516
+#include <netinet/ether.h>
+using namespace std;
+
+int sockfd;
+        struct ifreq if_idx;
+        struct ifreq if_mac;
+        int tx_len = 0;
+        char sendbuf[BUF_SIZ];
+        struct ether_header *eh = (struct ether_header *) sendbuf;
+        char ifName[IFNAMSIZ];
+
+	
 void
 sk_activate(const std::string& interfaceName)
 {

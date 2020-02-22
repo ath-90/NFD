@@ -26,13 +26,12 @@
 #include "ethernet-transport.hpp"
 #include "ethernet-protocol.hpp"
 #include "common/global.hpp"
-
 #include <pcap/pcap.h>
+#include "raw-socket-utils.hpp"
 
 #include <cstring> // for memcpy()
 
 #include <boost/endian/conversion.hpp>
-
 namespace nfd {
 namespace face {
 
